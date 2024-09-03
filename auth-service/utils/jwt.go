@@ -1,12 +1,24 @@
 package utils
 
 import (
+	"os"
 	"time"
+	"fmt"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("mysecretkey")
+var jwtSecret = getJWTSecret()
+
+func getJWTSecret() []byte {
+    secretName := os.Getenv("JWT_SECRET")
+    if secretName == "" {
+        panic("JWT_SECRET environment variable is not set")
+    }
+    fmt.Println("JWT_SECRET:", secretName) // Debug line
+    return []byte(secretName)
+}
+
 
 // Define custom claims with the new RegisteredClaims struct
 type Claims struct {

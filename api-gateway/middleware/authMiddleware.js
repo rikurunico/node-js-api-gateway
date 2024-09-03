@@ -1,5 +1,7 @@
 const axios = require('axios');
 const redis = require('redis');
+
+// Konfigurasi Redis Client
 const client = redis.createClient({ url: `redis://${process.env.REDIS_HOST}:6379` });
 
 client.connect();
@@ -11,19 +13,24 @@ module.exports = (role) => async (req, res, next) => {
     }
 
     try {
+        // Cek apakah token sudah ada di cache Redis
         const cachedToken = await client.get(token);
         if (cachedToken) {
             const user = JSON.parse(cachedToken);
+            // Cek apakah role sesuai dengan role yang diminta
             if (user.role !== role) {
                 return res.status(403).json({ message: 'Forbidden: Insufficient privileges' });
             }
-            req.user = user;
+            req.user = user; // Tambahkan data user ke request
             return next();
         }
 
+        // Validasi token dengan auth-service
         const response = await axios.post(`${process.env.AUTH_SERVICE_URL}/validate`, { token });
         if (response.data.valid) {
+            // Simpan hasil validasi ke Redis
             await client.set(token, JSON.stringify(response.data), { EX: response.data.exp });
+            // Cek apakah role sesuai dengan role yang diminta
             if (response.data.role !== role) {
                 return res.status(403).json({ message: 'Forbidden: Insufficient privileges' });
             }

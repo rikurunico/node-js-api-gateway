@@ -5,12 +5,8 @@ import (
 	"net/http"
 	"auth-service/utils"
 	"auth-service/model"
+	"gorm.io/gorm"
 )
-
-var users = []model.User{
-	{ID: 1, Username: "admin", Password: "password", Role: "admin"},
-	{ID: 2, Username: "user", Password: "password", Role: "user"},
-}
 
 type TokenResponse struct {
 	Token string `json:"token"`
@@ -24,12 +20,21 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, u := range users {
-		if u.Username == user.Username && u.Password == user.Password {
-			token, exp, _ := utils.GenerateToken(u.Username, u.Role)
-			json.NewEncoder(w).Encode(TokenResponse{Token: token, Exp: exp})
-			return
+	// Get user from database
+	var dbUser model.User
+	if err := utils.DB.Where("username = ?", user.Username).First(&dbUser).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
+		} else {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
+		return
+	}
+
+	if dbUser.Password == user.Password {
+		token, exp, _ := utils.GenerateToken(dbUser.Username, dbUser.Role)
+		json.NewEncoder(w).Encode(TokenResponse{Token: token, Exp: exp})
+		return
 	}
 
 	http.Error(w, "Invalid credentials", http.StatusUnauthorized)
