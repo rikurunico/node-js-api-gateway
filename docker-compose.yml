@@ -1,0 +1,38 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - '8080:8080'
+    environment:
+      - REDIS_HOST=redis
+      - AUTH_SERVICE_URL=http://auth-service:8081
+    depends_on:
+      - auth-service
+      - redis
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - '8081:8081'
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
+      - JWT_SECRET=mysecretkey
+    depends_on:
+      # - db
+      - redis
+
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+  # db:
+  #   image: postgres:alpine
+  #   environment:
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: authdb
+  #   ports:
+  #     - '5432:5432'
+  #   volumes:
+  #     - ./migration:/docker-entrypoint-initdb.d
