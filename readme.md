@@ -21,11 +21,6 @@ Proyek ini adalah aplikasi berbasis microservices yang terdiri dari beberapa kom
 Pastikan Anda memiliki perangkat lunak berikut yang terinstal di sistem Anda:
 
 - Docker
-- Docker Compose
-- Node.js
-- Python
-- PostgreSQL
-- Redis
 
 ## Instalasi
 
@@ -64,8 +59,11 @@ Pastikan Anda memiliki perangkat lunak berikut yang terinstal di sistem Anda:
   - `routes/`: Rute untuk autentikasi dan item.
   - `middleware/`: Middleware untuk otorisasi.
 
-- **migration-service/**: Layanan migrasi database.
-  - `migrate.js`: Skrip untuk menjalankan migrasi menggunakan Prisma.
+- **Frontend/**: Frontend aplikasi,
+  - `main.js`: Kode utama untuk frontend.
+  - `components/`: Komponen Vue.js untuk aplikasi.
+  - `router/`: Rute Vue Router untuk navigasi.
+  - `axios/`: Konfigurasi Axios untuk permintaan HTTP.
 
 ## Dokumentasi API
 
@@ -75,6 +73,7 @@ Dokumentasi API dapat diakses melalui file Postman JSON yang disediakan. Import 
 
 - **Autentikasi**: Gunakan endpoint `/auth/login` untuk mendapatkan token JWT.
 - **Item CRUD (Admin)**: 
+  - GET `/items/admin` untuk melihat semua item.
   - POST `/items/admin` untuk membuat item.
   - PUT `/items/admin/:id` untuk memperbarui item.
   - DELETE `/items/admin/:id` untuk menghapus item.
@@ -92,3 +91,10 @@ Untuk menguji aplikasi, Anda dapat menggunakan Postman atau alat lain untuk meng
 - **Masalah Koneksi Redis**: Pastikan Redis berjalan dan variabel `REDIS_HOST` diatur dengan benar.
 - **Masalah Autentikasi**: Periksa bahwa token JWT yang digunakan valid dan tidak kedaluwarsa.
 
+## Akun Dummy
+- **Admin**:
+  - Email: admin
+  - Password: adminpassword
+- **Pengguna Biasa**:
+  - Email: user1
+  - Password: user1password
