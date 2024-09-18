@@ -42,7 +42,8 @@ services:
     ports:
       - "8003:80"
     environment:
-      - API_GATEWAY_URL=http://api-gateway:8080
+      - NODE_ENV=production
+      - VUE_APP_API_GATEWAY_URL=http://api-gateway:8080
 
   redis:
     image: redis:alpine
