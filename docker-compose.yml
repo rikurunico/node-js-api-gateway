@@ -2,7 +2,7 @@ services:
   api-gateway:
     build: ./api-gateway
     ports:
-      - '8080:8080'
+      - "8080:8080"
     environment:
       - REDIS_HOST=redis
       - AUTH_SERVICE_URL=http://auth-service:8081
@@ -15,7 +15,7 @@ services:
   auth-service:
     build: ./auth-service
     ports:
-      - '8081:8081'
+      - "8081:8081"
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
@@ -26,6 +26,8 @@ services:
       - db
       - redis
 
+    restart: always
+
   item-service:
     build: ./item-service
     ports:
@@ -35,10 +37,17 @@ services:
     depends_on:
       - db
 
+  frontend:
+    build: ./frontend-service
+    ports:
+      - "8003:80"
+    environment:
+      - proxyURL=http://api-gateway:8080
+
   redis:
     image: redis:alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
 
   db:
     image: postgres:alpine
@@ -47,6 +56,6 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: authdb
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - ./db:/docker-entrypoint-initdb.d

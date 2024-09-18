@@ -39,4 +39,17 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// Menampilkan semua item 
+router.get('/', async (req, res) => {
+    try {
+        const response = await axios.get(`${itemServices}/items`, {
+            headers: { Authorization: req.headers['authorization'] },
+        });
+        res.status(200).json(response.data);
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ message: error.message });
+    }
+});
+
+
 module.exports = router;
