@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // env variable
-const proxyURL = process.env.proxyURL || 'http://localhost:8080';
+const proxyURL = process.env.API_GATEWAY_URL || 'http://localhost:8080';
 
 const instance = axios.create({
     baseURL: proxyURL,
